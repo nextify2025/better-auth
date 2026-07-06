@@ -1,8 +1,8 @@
 import type { BetterAuthPlugin } from "@better-auth/core";
 import { createAuthMiddleware } from "@better-auth/core/api";
 import { getDate } from "../../utils/date";
-import { createRateLimitRules } from "../../utils/rate-limit";
 import { getEndpointResponse } from "../../utils/plugin-helper";
+import { createRateLimitRules } from "../../utils/rate-limit";
 import { PACKAGE_VERSION } from "../../version";
 import { EMAIL_OTP_ERROR_CODES } from "./error-codes";
 import { storeOTP } from "./otp-token";

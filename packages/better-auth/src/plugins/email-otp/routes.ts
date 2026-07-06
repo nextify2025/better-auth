@@ -15,7 +15,7 @@ import { parseUserInput, parseUserOutput } from "../../db/schema";
 import { getDate } from "../../utils/date";
 import { EMAIL_OTP_ERROR_CODES as ERROR_CODES } from "./error-codes";
 import { storeOTP, tryReuseOTP, verifyStoredOTP } from "./otp-token";
-import type { EmailOTPOptions, RequiredEmailOTPOptions } from "./types";
+import type { RequiredEmailOTPOptions } from "./types";
 import {
 	defaultOTPGenerator,
 	splitAtLastColon,

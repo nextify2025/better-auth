@@ -4,11 +4,11 @@ import { APIError, BASE_ERROR_CODES } from "@better-auth/core/error";
 import * as z from "zod";
 import { getSessionFromCtx } from "../../api";
 import { setSessionCookie } from "../../cookies";
-import { generateNumericOTP } from "../../utils/otp";
 import { parseUserInput } from "../../db";
 import { parseUserOutput } from "../../db/schema";
 import type { Account } from "../../types";
 import { getDate } from "../../utils/date";
+import { generateNumericOTP } from "../../utils/otp";
 import { PHONE_NUMBER_ERROR_CODES } from "./error-codes";
 import type { PhoneNumberOptions, UserWithPhoneNumber } from "./types";
 
