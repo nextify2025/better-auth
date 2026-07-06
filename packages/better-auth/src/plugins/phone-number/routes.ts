@@ -4,7 +4,7 @@ import { APIError, BASE_ERROR_CODES } from "@better-auth/core/error";
 import * as z from "zod";
 import { getSessionFromCtx } from "../../api";
 import { setSessionCookie } from "../../cookies";
-import { generateRandomString } from "../../crypto/random";
+import { generateNumericOTP } from "../../utils/otp";
 import { parseUserInput } from "../../db";
 import { parseUserOutput } from "../../db/schema";
 import type { Account } from "../../types";
@@ -900,5 +900,5 @@ async function verifyPhoneNumberOTP(
 }
 
 function generateOTP(size: number) {
-	return generateRandomString(size, "0-9");
+	return generateNumericOTP(size);
 }

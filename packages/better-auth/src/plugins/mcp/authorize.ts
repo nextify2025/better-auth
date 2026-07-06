@@ -2,18 +2,13 @@ import type { GenericEndpointContext } from "@better-auth/core";
 import { APIError } from "@better-auth/core/error";
 import { getSessionFromCtx } from "../../api";
 import { generateRandomString } from "../../crypto";
+import { formatOAuthErrorURL as redirectErrorURL } from "../../utils/oauth";
 import type { OAuthApplication } from "../oidc-provider/schema";
 import type {
 	AuthorizationQuery,
 	Client,
 	OIDCOptions,
 } from "../oidc-provider/types";
-
-function redirectErrorURL(url: string, error: string, description: string) {
-	return `${url}${
-		url.includes("?") ? "&" : "?"
-	}error=${error}&error_description=${description}`;
-}
 
 export async function authorizeMCPOAuth(
 	ctx: GenericEndpointContext,

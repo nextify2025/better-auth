@@ -1,5 +1,10 @@
 import { base64Url } from "@better-auth/utils/base64";
 import { createHash } from "@better-auth/utils/hash";
+import { generateNumericOTP } from "../../utils/otp";
+import type { EmailOTPOptions } from "./types";
+
+export const defaultOTPGenerator = (options: EmailOTPOptions) =>
+	generateNumericOTP(options.otpLength ?? 6);
 
 export function toOTPIdentifier(
 	type: "email-verification" | "sign-in" | "forget-password" | "change-email",
