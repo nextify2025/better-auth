@@ -10,7 +10,7 @@ import {
 import type { OAuth2Tokens } from "@better-auth/core/oauth2";
 import { defu } from "defu";
 import * as z from "zod";
-import { originCheck } from "../../api";
+import { APIError, originCheck } from "../../api";
 import { parseJSON } from "../../client/parser";
 import { setSessionCookie } from "../../cookies";
 import { parseSetCookieHeader } from "../../cookies/cookie-utils";
@@ -411,7 +411,10 @@ export const oAuthProxy = <O extends OAuthProxyOptions>(opts?: O) => {
 								"Failed to decrypt OAuth proxy state cookie:",
 								e,
 							);
-							return;
+							const fallbackErrorURL =
+								ctx.context.options.onAPIError?.errorURL ||
+								`${ctx.context.baseURL}/error`;
+							throw redirectOnError(ctx, fallbackErrorURL, "invalid_state");
 						}
 
 						const errorURL =
@@ -633,7 +636,9 @@ export const oAuthProxy = <O extends OAuthProxyOptions>(opts?: O) => {
 								"Failed to prepare OAuth proxy state:",
 								e,
 							);
-							// Continue without proxy
+							throw new APIError("INTERNAL_SERVER_ERROR", {
+								message: "Failed to prepare OAuth proxy state",
+							});
 						}
 					}),
 				},

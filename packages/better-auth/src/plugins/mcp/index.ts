@@ -276,8 +276,13 @@ export const mcp = (options: MCPOptions) => {
 						const metadata = getMCPProviderMetadata(c, options);
 						return c.json(metadata);
 					} catch (e) {
-						console.log(e);
-						return c.json(null);
+						c.context.logger.error(
+							"Failed to generate OAuth authorization server metadata",
+							e,
+						);
+						throw new APIError("INTERNAL_SERVER_ERROR", {
+							message: "Failed to generate OAuth authorization server metadata",
+						});
 					}
 				},
 			),
