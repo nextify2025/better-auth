@@ -10,14 +10,18 @@ import {
 	sensitiveSessionMiddleware,
 } from "../../api";
 import { setCookieCache, setSessionCookie } from "../../cookies";
-import { generateRandomString, symmetricDecrypt } from "../../crypto";
+import { symmetricDecrypt } from "../../crypto";
 import { revokeUnprovenAccountAccess } from "../../db/revoke-unproven-account-access";
 import { parseUserInput, parseUserOutput } from "../../db/schema";
 import { getDate } from "../../utils/date";
 import { EMAIL_OTP_ERROR_CODES as ERROR_CODES } from "./error-codes";
 import { storeOTP, tryReuseOTP, verifyStoredOTP } from "./otp-token";
-import type { EmailOTPOptions, RequiredEmailOTPOptions } from "./types";
-import { splitAtLastColon, toOTPIdentifier } from "./utils";
+import type { RequiredEmailOTPOptions } from "./types";
+import {
+	defaultOTPGenerator,
+	splitAtLastColon,
+	toOTPIdentifier,
+} from "./utils";
 
 const types = [
 	"email-verification",
@@ -1278,9 +1282,6 @@ export const changeEmailEmailOTP = (opts: RequiredEmailOTPOptions) =>
 			});
 		},
 	);
-
-const defaultOTPGenerator = (options: EmailOTPOptions) =>
-	generateRandomString(options.otpLength ?? 6, "0-9");
 
 /**
  * Verifies a single-use OTP with race-condition protection.

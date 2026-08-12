@@ -3,16 +3,11 @@ import { APIError } from "@better-auth/core/error";
 import { isBrowserFetchRequest } from "@better-auth/core/utils/fetch-metadata";
 import { getSessionFromCtx } from "../../api";
 import { generateRandomString } from "../../crypto";
+import { formatOAuthErrorURL as formatErrorURL } from "../../utils/oauth";
 import { InvalidClient, InvalidRequest } from "./error";
 import { getClient } from "./index";
 import type { AuthorizationQuery, OIDCOptions } from "./types";
 import { parsePrompt } from "./utils/prompt";
-
-function formatErrorURL(url: string, error: string, description: string) {
-	return `${url}${
-		url.includes("?") ? "&" : "?"
-	}error=${error}&error_description=${description}`;
-}
 
 function getErrorURL(
 	ctx: GenericEndpointContext,

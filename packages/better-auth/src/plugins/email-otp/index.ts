@@ -1,8 +1,8 @@
 import type { BetterAuthPlugin } from "@better-auth/core";
 import { createAuthMiddleware } from "@better-auth/core/api";
-import { generateRandomString } from "../../crypto";
 import { getDate } from "../../utils/date";
 import { getEndpointResponse } from "../../utils/plugin-helper";
+import { createRateLimitRules } from "../../utils/rate-limit";
 import { PACKAGE_VERSION } from "../../version";
 import { EMAIL_OTP_ERROR_CODES } from "./error-codes";
 import { storeOTP } from "./otp-token";
@@ -20,7 +20,7 @@ import {
 	verifyEmailOTP,
 } from "./routes";
 import type { EmailOTPOptions } from "./types";
-import { toOTPIdentifier } from "./utils";
+import { defaultOTPGenerator, toOTPIdentifier } from "./utils";
 
 declare module "@better-auth/core" {
 	interface BetterAuthPluginRegistry<AuthOptions, Options> {
@@ -31,9 +31,6 @@ declare module "@better-auth/core" {
 }
 
 export type { EmailOTPOptions } from "./types";
-
-const defaultOTPGenerator = (options: EmailOTPOptions) =>
-	generateRandomString(options.otpLength ?? 6, "0-9");
 
 export const emailOTP = (options: EmailOTPOptions) => {
 	const opts = {
@@ -127,71 +124,21 @@ export const emailOTP = (options: EmailOTPOptions) => {
 			],
 		},
 
-		rateLimit: [
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/send-verification-otp";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/check-verification-otp";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/verify-email";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/sign-in/email-otp";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/request-password-reset";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/reset-password";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/forget-password/email-otp";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/request-email-change";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-			{
-				pathMatcher(path) {
-					return path === "/email-otp/change-email";
-				},
-				window: opts.rateLimit?.window || 60,
-				max: opts.rateLimit?.max || 3,
-			},
-		],
+		rateLimit: createRateLimitRules(
+			[
+				"/email-otp/send-verification-otp",
+				"/email-otp/check-verification-otp",
+				"/email-otp/verify-email",
+				"/sign-in/email-otp",
+				"/email-otp/request-password-reset",
+				"/email-otp/reset-password",
+				"/forget-password/email-otp",
+				"/email-otp/request-email-change",
+				"/email-otp/change-email",
+			],
+			opts.rateLimit?.window || 60,
+			opts.rateLimit?.max || 3,
+		),
 		options,
 		$ERROR_CODES: EMAIL_OTP_ERROR_CODES,
 	} satisfies BetterAuthPlugin;
