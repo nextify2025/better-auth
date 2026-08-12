@@ -289,6 +289,7 @@ export const oneTapClient = (options: GoogleOneTapOptions) => {
 									await callback(response.credential);
 								} catch (error) {
 									console.error("Error during button callback:", error);
+									throw error;
 								}
 							},
 							auto_select: autoSelect,

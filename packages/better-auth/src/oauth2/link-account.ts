@@ -103,7 +103,9 @@ export async function handleOAuthUserInfo(
 			} catch (e) {
 				c.context.logger.error("Unable to link account", e);
 				return {
-					error: "unable to link account",
+					error: isAPIError(e)
+						? e.message || "unable to link account"
+						: "unable to link account",
 					data: null,
 				};
 			}
